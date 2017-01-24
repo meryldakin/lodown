@@ -1,8 +1,25 @@
+'use strict';
+
 var 
     expect = require('chai').expect,
     sinon = require('sinon'),
     lodown = require('../index'),
     customers = require('./fixtures/customers.json');
+
+/*describe('lodown', function() {
+    describe('identity', function() {
+        it('should return value passed'), function(){
+          let input = 1;
+          let output = lodown.identity(input);
+          expect(output).to.equal(input);
+          
+          const inputComplex = {one: 'a'};
+          output = lodown.identity(inputComplex);
+          expect(output).to.eql(inputComplex);
+          }
+  
+});*/
+
 
 describe('lodown', function() {
     describe('each', function() {
