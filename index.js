@@ -254,6 +254,166 @@ module.exports.partition = partition;
  function unique (array) {
   var uniqueValues = filter(array, function (element, index, array) {
         return indexOf(array, element) === index;
-    })
+    });
   return uniqueValues;
 }
+
+/**
+ * map: Designed to iterate through an array or object and apply an action
+ * to each item, then return a new array with the function executed for each.
+ * 
+ * @param {Object or Array} collection The Object or Array to iterate through.
+ * @param {Function} action The function that will act upon every item in 
+ * the collection.
+ * 
+ * @return {Array} Map returns a new array of the elements passed through it
+ * with each affected by the action passed to it.
+ */
+ 
+function map (collection, action) {
+    const mappedArray = [];
+    each(collection, function (element, index, array){
+      mappedArray.push(action(element, index, array));
+    });
+    return mappedArray;
+}
+
+/**
+ * pluck: Designed to take an array of objects and a property, then return 
+ * every value in each object that corresponds to that property.
+ * 
+ * @param {Array} arrOfObj The array of objects that will be checked for the 
+ * existence of the passed property.
+ * @param {String} property The property that indicates which values of the 
+ * objects to return
+ * 
+ * @return {Array} Pluck returns an array of the values that corresponds
+ * to the property given as an argument.
+ */
+ 
+ function pluck(arrOfObj, property) {
+  return map(arrOfObj, function (element, index, collection){
+    return arrOfObj[index][property];
+  });
+}
+
+/**
+ * every: Designed to return true on an Object or Array only if every 
+ * value in the collection is true or can be coerced to true.
+ * 
+ * @param {Array or Object} collection The Object or Array to check through
+ * @param {Function} test The test to execute on each value that will return
+ * a true or false
+ * 
+ * @return {Boolean} Every returns a true only if every value resolves to
+ * true after the test is executed on it. If one value resolves to false,
+ * Every returns false.
+ */
+
+function every (collection, test) {
+  if (test){
+    const filteredValues = filter(map(collection, test), function (value){
+      return Boolean(value) === false;
+    });
+    if (filteredValues[0] === false){
+      return false;
+    } else {
+      return true;
+    }
+  } else if (!test) {
+      const justValues = map(collection, function (value){
+        return Boolean(value);
+      });
+      const justFilteredValues = filter(justValues, function(value){
+        return value === false;
+      });
+    if (justFilteredValues[0] === false){
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
+/**
+ * some: Designed to return false on an Object or Array only if every 
+ * value in the collection is false or can be coerced to false. It is the 
+ * opposite of Every - it returns true if SOME of the values are true.
+ * 
+ * @param {Array or Object} collection The Object or Array to check through
+ * @param {Function} test The test to execute on each value that will return
+ * a true or false
+ * 
+ * @return {Boolean} Some returns false when every value is false. It returns
+ * true if some (even one) of the values is true.
+ */
+ 
+function some (collection, test) {
+if (test){
+    const filteredValues = filter(map(collection, test), function (value){
+      return Boolean(value) === true;
+    });
+    if (filteredValues[0] === true){
+      return true;
+    } else {
+      return false;
+    }
+  } else if (!test) {
+      const justValues = map(collection, function (value){
+        return Boolean(value);
+      });
+      const justFilteredValues = filter(justValues, function(value){
+        return value === true;
+      });
+    if (justFilteredValues[0] === true){
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+/**
+ * reduce: Designed to combine the values in an array with whatever function
+ * is passed to it and return a single value.
+ * 
+ * @param {Array} array The array of values to combine
+ * @param {Function} action The operation to perform on the values that will
+ * combine them into one value
+ * @param {Number | Seed | Boolean | Array | Object} seed The starting 
+ * value to combine the values in array with. Can be omitted and if it is, the
+ * first value in the array will act as the seed.
+ * 
+ * @return {Number | Seed | Boolean | Array | Object} Reduce returns a single
+ * value that represents the combined values of the passed array
+ */
+
+function reduce (array, action, seed){
+let counter;
+  if (seed === undefined){
+    counter = array[0];
+    let reducedArray = array.slice(1);
+    each(reducedArray, function(value, index, collection){
+      counter = action(counter, value, index + 1);
+    });  
+ } else {
+    counter = seed;
+    each(array, function(value, index, collection){
+      counter = action(counter, value, index);
+    });
+  } return counter;
+}
+
+/**
+ * extend: Designed to take one or more objects and combine the properties 
+ * of the objects into the first object.
+ * 
+ * @param {Object} object The object that will hold the properties of any
+ * other object passed through (any number of objects can be passed through
+ * here, but the first one will be returned with the properties of all the 
+ * rest).
+ * 
+ * @return {Object} Extend returns a single object that holds the properties 
+ * of all other objects passed in after it.
+ */
+
