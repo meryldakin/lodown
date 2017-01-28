@@ -33,8 +33,6 @@ function typeOf(value) {
         return "array";
         } else if (value === null) {
         return "null";
-        } else if (value instanceof Date) {
-        return "date";
         } else {
           return "object";
         }
@@ -143,16 +141,14 @@ module.exports.each = each;
 
 function indexOf(array, value){
     var positionValue = [];
-    if (array.includes(value) === false){
-        return -1;
-    } else {
-        for (let i = 0; i < array.length; i++) {
-            if (value === array[i]) {
-               positionValue.push(i);
-            }
-        }
-      } return positionValue[0];
+  each(array, function(element, index, collection){
+    if (value === collection[index]){
+      positionValue.push(index);
+      }
+  });
+  return positionValue.length > 0 ? positionValue[0] : -1;
 }
+
 module.exports.indexOf = indexOf;
 
 /**
@@ -258,6 +254,8 @@ module.exports.partition = partition;
   return uniqueValues;
 }
 
+module.exports.unique = unique;
+
 /**
  * map: Designed to iterate through an array or object and apply an action
  * to each item, then return a new array with the function executed for each.
@@ -278,6 +276,8 @@ function map (collection, action) {
     return mappedArray;
 }
 
+module.exports.map = map;
+
 /**
  * pluck: Designed to take an array of objects and a property, then return 
  * every value in each object that corresponds to that property.
@@ -296,6 +296,31 @@ function map (collection, action) {
     return arrOfObj[index][property];
   });
 }
+
+module.exports.pluck = pluck;
+
+/**
+ * contains: Designed to tell whether or not a certain element exists in an array
+ * 
+ * @param {Array} array The Array to check through for the given element
+ * @param {String | Number | Boolean | Array | Object} value The value to check
+ * array for
+ * 
+ * @return {Boolean} Contains returns a true if value is found in array, otherwise
+ * returns false
+ */
+
+function contains(array, value){
+    let arrayContainsValue = [];
+    each(array, function(element){
+    if (element === value){
+    arrayContainsValue.push(true);
+    }
+  });
+  return arrayContainsValue[0] === true ? true : false;
+}
+
+module.exports.contains = contains;
 
 /**
  * every: Designed to return true on an Object or Array only if every 
@@ -335,6 +360,8 @@ function every (collection, test) {
   }
 }
 
+module.exports.every = every;
+
 /**
  * some: Designed to return false on an Object or Array only if every 
  * value in the collection is false or can be coerced to false. It is the 
@@ -373,6 +400,8 @@ if (test){
   }
 }
 
+module.exports.some = some;
+
 /**
  * reduce: Designed to combine the values in an array with whatever function
  * is passed to it and return a single value.
@@ -404,6 +433,8 @@ let counter;
   } return counter;
 }
 
+module.exports.reduce = reduce;
+
 /**
  * extend: Designed to take one or more objects and combine the properties 
  * of the objects into the first object.
@@ -416,4 +447,16 @@ let counter;
  * @return {Object} Extend returns a single object that holds the properties 
  * of all other objects passed in after it.
  */
+ 
+function extend (object){
+  let args = Array.from(arguments);
+  each(args, function(elementInCollec, key, collection){
+    each(args[key], function(elementInCollec, key, collection){
+      object[key] = elementInCollec;
+    });
+  });
+  return object;
+  
+}
 
+module.exports.extend = extend;
